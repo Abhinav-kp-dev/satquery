@@ -1,0 +1,13 @@
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+rasterio==1.4.4
+numpy==2.4.6
+scikit-image==0.25.1
+Pillow==11.0.0
+scikit-learn==1.6.0
+pydantic==2.10.4
+pydantic-settings==2.7.0
+python-multipart==0.0.20
+anthropic==0.40.0
+aiofiles==24.1.0
+PyYAML==6.0.2

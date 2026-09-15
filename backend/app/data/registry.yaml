@@ -1,0 +1,28 @@
+# Task -> tool plan registry. This is the "predefined registry" the
+# problem statement asks the agent to select from -- a data structure the
+# controller reads, not an if/else buried in code.
+
+vqa:
+  description: Answer a free-form question about a single (or one selected) image.
+  applicable_configs: [single_image, bi_temporal_pair, cross_modal_pair]
+  tools: [spectral_index, sar_backscatter, rs_narrate]
+
+caption:
+  description: Describe the scene / land cover in the image.
+  applicable_configs: [single_image]
+  tools: [spectral_index, sar_backscatter, rs_narrate]
+
+grounding:
+  description: Localize the specific region a question refers to (e.g. "highlight the water body").
+  applicable_configs: [single_image, cross_modal_pair]
+  tools: [spectral_index, sar_backscatter, rs_narrate]
+
+change:
+  description: Describe and quantify what changed between two dates of the same modality.
+  applicable_configs: [bi_temporal_pair]
+  tools: [spectral_index, sar_backscatter, delta_change, rs_narrate]
+
+fusion:
+  description: Combine co-registered optical and SAR evidence, noting agreement/disagreement.
+  applicable_configs: [cross_modal_pair]
+  tools: [spectral_index, sar_backscatter, fusion_agreement, rs_narrate]

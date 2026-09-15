@@ -1,0 +1,137 @@
+[
+  {
+    "task": "vqa",
+    "question": "What type of land cover dominates this scene?",
+    "answer": "<ANSWER>The scene is dominated by cultivated agricultural land arranged in regular parcels, with a smaller share of built-up area along the northern edge and a narrow strip of riparian vegetation following the watercourse.</ANSWER>"
+  },
+  {
+    "task": "vqa",
+    "question": "Is there any water visible in this image?",
+    "answer": "<ANSWER>Yes. Water covers <CLAIM value=\"12.4\" unit=\"percent\">approximately 12% of the scene</CLAIM>, concentrated in a single water body in the eastern third of the image with a mostly regular shoreline consistent with a reservoir.</ANSWER>"
+  },
+  {
+    "task": "vqa",
+    "question": "How much of this area is built-up?",
+    "answer": "<ANSWER>Built-up surfaces cover <CLAIM value=\"18.7\" unit=\"percent\">about 19% of this scene</CLAIM>, concentrated in a dense cluster in the western half, consistent with a town centre surrounded by lower-density development.</ANSWER>"
+  },
+  {
+    "task": "vqa",
+    "question": "Does this look like a healthy vegetated area?",
+    "answer": "<ANSWER>Vegetation covers <CLAIM value=\"64.2\" unit=\"percent\">roughly 64% of the scene</CLAIM> with high, uniform index values, which is consistent with dense, healthy vegetation rather than stressed or sparse cover.</ANSWER>"
+  },
+  {
+    "task": "vqa",
+    "question": "What can you tell me about the terrain roughness from the radar image?",
+    "answer": "<ANSWER>Backscatter is high and spatially heterogeneous across most of the scene, consistent with rough, structured surfaces such as buildings or vegetation canopy rather than smooth bare ground or water.</ANSWER>"
+  },
+  {
+    "task": "vqa",
+    "question": "Are there any roads visible?",
+    "answer": "<ANSWER>Several linear features consistent with roads are visible, forming a grid pattern through the built-up cluster in the western portion of the scene; the largest runs roughly east-west across the full image width.</ANSWER>"
+  },
+  {
+    "task": "caption",
+    "question": "Describe the land cover in this image.",
+    "answer": "<ANSWER>This is a mixed agricultural-rural scene. Regularly shaped cultivated fields cover most of the image, bordered by a network of narrow access tracks. A compact settlement with closely packed structures sits in the northeast corner, and a thin band of vegetation traces a stream along the southern edge.</ANSWER>"
+  },
+  {
+    "task": "caption",
+    "question": "Give a scene overview of this satellite image.",
+    "answer": "<ANSWER>The image shows a coastal transition zone: open water occupies the eastern portion, giving way to a sandy or bare-soil shoreline strip, then vegetated dunes, and finally low-density built structures further inland to the west.</ANSWER>"
+  },
+  {
+    "task": "caption",
+    "question": "What kind of environment does this SAR image show?",
+    "answer": "<ANSWER>The image shows a predominantly forested landscape with high, textured backscatter typical of dense canopy, interrupted by a smooth, low-backscatter linear feature crossing the centre that is consistent with a river.</ANSWER>"
+  },
+  {
+    "task": "caption",
+    "question": "Summarize what this scene depicts.",
+    "answer": "<ANSWER>The scene depicts an industrial or logistics site: large rectangular structures with uniform rooftops are arranged around paved yards and access roads, surrounded by open, sparsely vegetated land.</ANSWER>"
+  },
+  {
+    "task": "grounding",
+    "question": "Highlight the water body in this image.",
+    "answer": "<ANSWER>The water body referred to is the contiguous dark region in the eastern third of the scene, spanning roughly from the mid-height of the image to its southeast corner; it has been outlined on the overlay.</ANSWER>"
+  },
+  {
+    "task": "grounding",
+    "question": "Where is the built-up area in this scene?",
+    "answer": "<ANSWER>The built-up area is concentrated in the northwest quadrant, forming a dense cluster roughly a quarter of the image width across; it is marked on the overlay in orange.</ANSWER>"
+  },
+  {
+    "task": "grounding",
+    "question": "Point to the largest vegetated patch.",
+    "answer": "<ANSWER>The largest contiguous vegetated patch spans the southern half of the image, bounded by the road on its northern edge; it is marked in green on the overlay.</ANSWER>"
+  },
+  {
+    "task": "grounding",
+    "question": "Locate the region with the highest radar backscatter.",
+    "answer": "<ANSWER>The highest-backscatter region is the built-up cluster in the eastern portion of the image, consistent with double-bounce reflection off building walls and ground; it is marked on the overlay.</ANSWER>"
+  },
+  {
+    "task": "change",
+    "question": "What changed between these two dates, and where?",
+    "answer": "<ANSWER>Between the two acquisitions, water extent increased substantially. Newly inundated area appears mainly in the low-lying central and southern portions of the scene, adding <CLAIM value=\"432.6\" unit=\"hectares\">about 433 hectares</CLAIM> of water not present at the earlier date, while the pre-existing water body's boundary in the east stayed largely the same.</ANSWER>"
+  },
+  {
+    "task": "change",
+    "question": "Has the built-up area increased, decreased, or remained unchanged?",
+    "answer": "<ANSWER>Built-up area increased. New construction is visible along the southern edge of the existing settlement, adding <CLAIM value=\"27.3\" unit=\"hectares\">roughly 27 hectares</CLAIM> of built-up surface between the two dates, while no meaningful area reverted from built-up to non-built-up.</ANSWER>"
+  },
+  {
+    "task": "change",
+    "question": "Did vegetation cover grow or shrink between these two images?",
+    "answer": "<ANSWER>Vegetation cover decreased. A contiguous block in the northeast that was vegetated at the earlier date shows bare or cleared ground at the later date, a net loss of <CLAIM value=\"58.1\" unit=\"hectares\">about 58 hectares</CLAIM>, consistent with clearing rather than seasonal variation given the sharpness of the boundary.</ANSWER>"
+  },
+  {
+    "task": "change",
+    "question": "What changed here, and does it look like new excavation?",
+    "answer": "<ANSWER>A patch of previously vegetated/undisturbed ground in the central portion of the scene shows exposed bare soil at the later date, covering <CLAIM value=\"14.8\" unit=\"hectares\">about 15 hectares</CLAIM>. The sharp, geometric boundary of the disturbance is more consistent with excavation or earthworks than natural land-cover change, though this cannot be confirmed from imagery alone.</ANSWER>"
+  },
+  {
+    "task": "change",
+    "question": "How much area is now underwater compared to before?",
+    "answer": "<ANSWER><CLAIM value=\"864.0\" unit=\"hectares\">About 864 hectares</CLAIM> of land that was dry at the earlier date is water-covered at the later date, a net increase from <CLAIM value=\"8.0\" unit=\"percent\">8%</CLAIM> to <CLAIM value=\"41.0\" unit=\"percent\">41%</CLAIM> water coverage of the scene.</ANSWER>"
+  },
+  {
+    "task": "fusion",
+    "question": "Use both the optical and SAR images to find water and built-up regions.",
+    "answer": "<ANSWER>Optical (NDWI) and SAR (backscatter) evidence agree closely on water extent, with an agreement of <CLAIM value=\"0.81\" unit=\"iou\">0.81 IoU</CLAIM> between the two independently derived water masks -- both place the main water body in the same eastern portion of the scene. For built-up area, SAR detects a somewhat larger extent than the optical index alone, likely because double-bounce structures at the settlement's edge are less distinguishable in the optical composite; the fused estimate favours the SAR-detected boundary given this disagreement.</ANSWER>"
+  },
+  {
+    "task": "fusion",
+    "question": "Do the optical and SAR data agree on where the built-up area is?",
+    "answer": "<ANSWER>Agreement is moderate: the optical NDBI-based mask and the SAR double-bounce mask overlap with an IoU of <CLAIM value=\"0.58\" unit=\"iou\">0.58</CLAIM>. Both sensors agree on the dense core of the settlement, but the SAR-derived mask extends further along the southern edge, which may reflect bare or compacted ground with structural roughness rather than deliberate construction -- this is flagged as a lower-confidence region.</ANSWER>"
+  },
+  {
+    "task": "fusion",
+    "question": "Combine the optical and SAR evidence and note where they disagree.",
+    "answer": "<ANSWER>The two sensors disagree in the northern part of the scene: the optical composite shows what appears to be open, dry ground, while SAR backscatter there is low, similar to a water signature. This kind of disagreement is characteristic of very smooth bare soil or a paved surface being misread by SAR alone as water -- the optical evidence is treated as more reliable in this specific region, and the area is reported as bare/paved ground, not water.</ANSWER>"
+  },
+  {
+    "task": "sufficiency",
+    "question": "Is this area flooded?",
+    "answer": "<ANSWER>Water covers <CLAIM value=\"41.2\" unit=\"percent\">about 41%</CLAIM> of this scene. A single image cannot confirm flooding on its own, since it cannot show whether this water is a permanent feature (a lake, reservoir, or normal monsoon-season inundation) or an abnormal event. A pre-event image of the same location would let the system report how much of this water is newly present rather than pre-existing.</ANSWER>"
+  },
+  {
+    "task": "sufficiency",
+    "question": "Has this area experienced deforestation recently?",
+    "answer": "<ANSWER>Vegetation currently covers <CLAIM value=\"37.5\" unit=\"percent\">about 38%</CLAIM> of this scene, with several bare or sparsely vegetated patches visible. Whether this represents recent deforestation cannot be determined from a single image, since it provides no information about what this area looked like previously. A second image from an earlier date of the same location would let the system quantify any vegetation loss directly.</ANSWER>"
+  },
+  {
+    "task": "sufficiency",
+    "question": "Is there illegal construction in this image?",
+    "answer": "<ANSWER>Built-up surfaces cover <CLAIM value=\"22.1\" unit=\"percent\">about 22%</CLAIM> of this scene. Imagery alone -- from a single date, with no cadastral or permit data -- cannot establish whether any structure is authorized or illegal; that determination requires land-record data this system does not have access to. What can be reported is the current extent and location of built-up area, and, given a prior-date image, whether any of it is new since that date.</ANSWER>"
+  },
+  {
+    "task": "sufficiency",
+    "question": "Has crop health declined this season?",
+    "answer": "<ANSWER>The current vegetation index values are moderate to high across most of the field, covering <CLAIM value=\"71.0\" unit=\"percent\">71%</CLAIM> of the scene, with a few weaker patches near the field boundary. Whether this represents a decline requires a comparison against an earlier point in the same growing season, which this single image cannot provide; a mid-season reference image would let the system report a direct change in vegetation index over time.</ANSWER>"
+  },
+  {
+    "task": "sufficiency",
+    "question": "Does this look abnormal compared to a typical year?",
+    "answer": "<ANSWER>This system has no archive of prior years for this location to compare against -- only the image provided in this query. It can report what is measurable in this single scene (index values, land-cover fractions) but cannot characterize it as normal or abnormal without a reference image or a stated baseline to compare it to.</ANSWER>"
+  }
+]
