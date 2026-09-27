@@ -1,88 +1,104 @@
-"""Specialist prompt templates -- the no-training substitute for one LoRA
-adapter per task family. Each task gets its own instruction template; the
-model itself is never retrained, only conditioned differently per call.
+"""Specialist prompt templates plus retrieval-augmented in-context examples.
+
+With the `openai_compat` backend each task family is additionally served by
+its own LoRA adapter (see registry.yaml); with the mock/Anthropic backends
+the task template and retrieved exemplars are the specialisation.
+
+The evidence block lists ledger entries by id, so the narrator is grounded
+in -- and cites -- the same records the adjudicator later checks.
 """
 from __future__ import annotations
 
 from app.config import settings
-from app.models.schemas import SufficiencyVerdict, Task
+from app.models.schemas import LedgerEntry, QuerySpec, SufficiencyVerdict, Task
 from app.vlm.retrieval import get_example_pool
 
-DOMAIN_CONTEXT = """You are a remote-sensing imagery analyst. You are shown a rendered composite of a \
-satellite scene alongside evidence already measured by deterministic tools -- treat that evidence as \
-ground truth, not as something to re-derive from the image yourself.
+DOMAIN_CONTEXT = """You are a remote-sensing imagery analyst. You are shown rendered composite(s) of a \
+satellite scene alongside evidence already measured by deterministic tools and recorded in an evidence \
+ledger. Treat that evidence as ground truth -- never re-derive numbers from the image yourself. Use the \
+image only for qualitative context (texture, shape, arrangement) that the numbers do not capture.
 
-Key terms: NDWI (a water index derived from green/near-infrared reflectance), NDBI (a built-up index \
-from short-wave-infrared/near-infrared reflectance), NDVI (a vegetation index from near-infrared/red \
-reflectance), SAR backscatter (radar reflection strength in decibels -- low VV backscatter indicates \
-water because it reflects radar away from the sensor; high VV with a small VV-VH gap indicates \
-built-up surfaces, from double-bounce reflection off walls and ground), GSD (ground sample distance, \
-the resolution of the image in metres per pixel)."""
+Key terms: NDWI/MNDWI (water indices from green vs near-infrared / short-wave-infrared reflectance), \
+NDVI (vegetation index, near-infrared vs red), NDBI (built-up index, SWIR vs NIR), BSI (bare-soil index), \
+SAR backscatter (radar return in dB: low co-pol = smooth water; bright co-pol with a small co-/cross-pol \
+gap = double-bounce from buildings), IoU (overlap between two masks, 0..1), GSD (metres per pixel)."""
 
 TASK_TEMPLATES: dict[Task, str] = {
-    Task.VQA: "Answer the question about this scene using only the tool evidence provided. Do not invent numbers not present in the evidence.",
-    Task.CAPTION: "Describe the scene and its dominant land cover, grounding any quantitative statement in the tool evidence provided.",
-    Task.GROUNDING: "Identify and describe the location of the region the question refers to, in relative terms (e.g. 'northeast quadrant'). An overlay will render the corresponding tool-derived mask.",
-    Task.CHANGE: "Compare the two time points using the change evidence provided. State the direction of change and the measured area, in hectares, of the change.",
-    Task.FUSION: "Combine the optical-derived and SAR-derived evidence below. Explicitly state where the two sensors agree and where they disagree, using the agreement/IoU figure provided.",
+    Task.VQA: "Answer the question about this scene using only the ledger evidence. Lead with the direct answer.",
+    Task.CAPTION: "Describe the scene and its dominant land cover in 2-3 sentences, grounding every quantity in the ledger evidence.",
+    Task.GROUNDING: "Say where the region the question refers to is (relative position, and coordinates if the ledger has them). The overlay draws the tool-derived regions.",
+    Task.CHANGE: "Compare the two dates using the change evidence. State the direction of change and the measured area in hectares; mention where it is concentrated.",
+    Task.FUSION: "Combine the optical-derived and SAR-derived evidence. State where the two sensors agree and disagree, citing the IoU, and what that means for how much to trust the result.",
 }
 
-SCOPE_DOWN_INSTRUCTION = """The question implies a comparison against a baseline or prior state that this \
-single image cannot provide. Answer only what the tool evidence directly supports, then plainly state \
-what additional input (e.g. a prior-date image) would be needed to fully answer the question. Do not \
-guess at whether a change or anomaly has occurred."""
+SCOPE_DOWN_INSTRUCTION = """The question cannot be fully answered from this input: {reason} \
+Answer only what the ledger evidence supports, then state plainly what additional input would be needed \
+({missing}). Do not guess whether a change or anomaly occurred."""
 
 OUTPUT_FORMAT_INSTRUCTION = """Respond in exactly this format, with no text outside the tags:
-<ANSWER>your natural-language answer, written for a non-specialist reader</ANSWER>
+<ANSWER>your answer, written for a non-specialist reader, at most 4 sentences</ANSWER>
 
-Wrap every specific number you state (a percentage, an area, an index value) in a CLAIM tag inside the \
-ANSWER, like this: <CLAIM value="41.2" unit="percent">41.2%</CLAIM>. Every claimed number must come \
-directly from the tool evidence below -- never state a number that is not present in it."""
+Wrap every number you state in a CLAIM tag inside the ANSWER, e.g. \
+<CLAIM value="41.2" unit="percent">41.2%</CLAIM> or <CLAIM value="1078.5" unit="hectares">1,078.5 ha</CLAIM>. \
+Units: percent, hectares, km2, iou, index, dB, count. Every claimed number must come from a ledger entry \
+below (fractions are shown with their percentage). Numbers that do not match the ledger are replaced \
+with the measured value before the answer is delivered."""
+
+_HIDDEN = ("_separability", "valid_fraction")
 
 
-def format_evidence_block(evidence: dict) -> str:
+def format_evidence_block(entries: dict[str, LedgerEntry], decisions: dict[str, object]) -> str:
     lines = []
-    for key, value in evidence.items():
-        if isinstance(value, float):
-            lines.append(f"- {key}: {value:.3f}")
+    for key, e in entries.items():
+        if any(h in key for h in _HIDDEN):
+            continue
+        v = e.value
+        if e.unit == "fraction":
+            lines.append(f"[{e.entry_id}] {key} = {v:.4f}  ({v * 100:.1f}%)")
+        elif e.unit == "ha":
+            lines.append(f"[{e.entry_id}] {key} = {v:,.2f} ha")
+        elif isinstance(v, float):
+            lines.append(f"[{e.entry_id}] {key} = {v:.3f} {e.unit or ''}".rstrip())
         else:
-            lines.append(f"- {key}: {value}")
+            lines.append(f"[{e.entry_id}] {key} = {v} {e.unit or ''}".rstrip())
+    for key, v in decisions.items():
+        lines.append(f"- {key}: {v}")
     return "\n".join(lines) if lines else "- (no numeric evidence available)"
 
 
 def build_prompt(
     question: str,
-    task: Task,
-    evidence: dict,
+    spec: QuerySpec,
+    entries: dict[str, LedgerEntry],
+    decisions: dict[str, object],
     sufficiency: SufficiencyVerdict,
+    sufficiency_reason: str,
+    missing_input: str | None,
     manifest_line: str,
+    history: list[tuple[str, str]] | None = None,
 ) -> tuple[str, list[str]]:
     pool = get_example_pool()
-    examples = pool.retrieve(question, task, k=settings.few_shot_k)
-
-    used_ids = [f"{task.value}:{ex['question'][:40]}" for ex in examples]
+    examples = pool.retrieve(question, spec.task, k=settings.few_shot_k)
+    used_ids = [f"{spec.task.value}:{ex['question'][:48]}" for ex in examples]
 
     if sufficiency == SufficiencyVerdict.SCOPE_DOWN:
-        suff_example = pool.force_sufficiency_example()
-        if suff_example and suff_example not in examples:
-            examples = examples[:-1] + [suff_example] if examples else [suff_example]
-            used_ids.append(f"sufficiency:{suff_example['question'][:40]}")
+        suff = pool.force_sufficiency_example()
+        if suff and suff not in examples:
+            examples = (examples[:-1] if examples else []) + [suff]
+            used_ids.append(f"sufficiency:{suff['question'][:48]}")
 
-    few_shot_block = "\n\n".join(
-        f"Example question: {ex['question']}\nExample answer: {ex['answer']}" for ex in examples
-    )
-
-    parts = [
-        DOMAIN_CONTEXT,
-        manifest_line,
-        TASK_TEMPLATES[task],
-    ]
+    parts = [DOMAIN_CONTEXT, manifest_line, TASK_TEMPLATES[spec.task]]
+    parts.append(f"Parsed query: target={spec.target.value}, metric={spec.metric}, wants_location={spec.wants_location}")
     if sufficiency == SufficiencyVerdict.SCOPE_DOWN:
-        parts.append(SCOPE_DOWN_INSTRUCTION)
-    if few_shot_block:
-        parts.append("Reference examples (for style and format only -- do not copy their numbers):\n\n" + few_shot_block)
-    parts.append("Tool evidence for THIS scene:\n" + format_evidence_block(evidence))
+        parts.append(SCOPE_DOWN_INSTRUCTION.format(reason=sufficiency_reason, missing=missing_input or "a reference image"))
+    if history:
+        parts.append("Earlier turns in this session (for context only):\n" + "\n".join(f"Q: {q}\nA: {a}" for q, a in history[-3:]))
+    if examples:
+        parts.append(
+            "Reference examples (style and format only -- do not copy their numbers):\n\n"
+            + "\n\n".join(f"Example question: {ex['question']}\nExample answer: {ex['answer']}" for ex in examples)
+        )
+    parts.append("Evidence ledger for THIS scene:\n" + format_evidence_block(entries, decisions))
     parts.append(OUTPUT_FORMAT_INSTRUCTION)
     parts.append(f"Question: {question}")
-
     return "\n\n".join(parts), used_ids

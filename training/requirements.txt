@@ -1,0 +1,8 @@
+# GPU training environment (separate from the backend runtime).
+torch>=2.4
+transformers>=4.49
+peft>=0.14
+accelerate>=1.2
+datasets>=3.2
+qwen-vl-utils>=0.0.8
+Pillow>=10

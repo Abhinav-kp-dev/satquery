@@ -1,0 +1,60 @@
+{"q": "What fraction of this image is covered by water?", "input": "optical12", "task": "vqa", "target": "water", "verdict": "proceed"}
+{"q": "How many hectares of forest are there?", "input": "optical12", "task": "vqa", "target": "vegetation", "verdict": "proceed"}
+{"q": "Is there a river in this scene?", "input": "optical4", "task": "vqa", "target": "water", "verdict": "proceed"}
+{"q": "Give me an overview of this satellite image.", "input": "optical12", "task": "caption", "target": "land_cover", "verdict": "proceed"}
+{"q": "Summarise the scene.", "input": "optical4", "task": "caption", "target": "land_cover", "verdict": "proceed"}
+{"q": "What do you see in this image?", "input": "optical12", "task": "caption", "target": "land_cover", "verdict": "proceed"}
+{"q": "Where is the lake located?", "input": "optical12", "task": "grounding", "target": "water", "verdict": "proceed"}
+{"q": "Show me the built-up areas.", "input": "optical12", "task": "grounding", "target": "built_up", "verdict": "proceed"}
+{"q": "Outline the settlements and give their coordinates.", "input": "optical12", "task": "grounding", "target": "built_up", "verdict": "proceed"}
+{"q": "Mark the bare soil patches.", "input": "optical12", "task": "grounding", "target": "bare_soil", "verdict": "proceed"}
+{"q": "Is this area flooded?", "input": "optical12", "task": "vqa", "target": "water", "verdict": "scope_down"}
+{"q": "Has deforestation happened here?", "input": "optical12", "task": "vqa", "target": "vegetation", "verdict": "scope_down"}
+{"q": "Is the reservoir lower than usual?", "input": "optical4", "task": "vqa", "target": "water", "verdict": "scope_down"}
+{"q": "Is there illegal mining in this area?", "input": "optical12", "task": "vqa", "target": "bare_soil", "verdict": "scope_down"}
+{"q": "Has encroachment on the wetland occurred?", "input": "optical12", "task": "vqa", "target": "water", "verdict": "scope_down"}
+{"q": "What changed since 2019?", "input": "optical12", "task": "change", "target": "land_cover", "verdict": "request_input"}
+{"q": "How much has the town grown?", "input": "optical12", "task": "change", "target": "built_up", "verdict": "request_input"}
+{"q": "Compare the water extent before and after the monsoon.", "input": "optical4", "task": "change", "target": "water", "verdict": "request_input"}
+{"q": "Is there any new construction?", "input": "optical12", "task": "change", "target": "built_up", "verdict": "request_input"}
+{"q": "Combine optical and SAR to map the water.", "input": "optical12", "task": "fusion", "target": "water", "verdict": "request_input"}
+{"q": "Do the radar and optical images agree on flooding?", "input": "optical4", "task": "fusion", "target": "water", "verdict": "request_input"}
+{"q": "How much built-up area is there?", "input": "optical4", "task": "vqa", "target": "built_up", "verdict": "scope_down"}
+{"q": "How much bare soil is visible?", "input": "optical4", "task": "vqa", "target": "bare_soil", "verdict": "scope_down"}
+{"q": "How much water is in this RGB photo?", "input": "rgb3", "task": "vqa", "target": "water", "verdict": "proceed"}
+{"q": "How much vegetation is in this image?", "input": "rgb3", "task": "vqa", "target": "vegetation", "verdict": "scope_down"}
+{"q": "What percentage of the radar scene is water?", "input": "sar2", "task": "vqa", "target": "water", "verdict": "proceed"}
+{"q": "How much urban area does the SAR image show?", "input": "sar2", "task": "vqa", "target": "built_up", "verdict": "proceed"}
+{"q": "How much urban area does the SAR image show?", "input": "sar1", "task": "vqa", "target": "built_up", "verdict": "scope_down"}
+{"q": "How much cropland is there?", "input": "sar2", "task": "vqa", "target": "vegetation", "verdict": "scope_down"}
+{"q": "Describe the land cover.", "input": "sar2", "task": "caption", "target": "land_cover", "verdict": "proceed"}
+{"q": "Where is the water in the radar image?", "input": "sar2", "task": "grounding", "target": "water", "verdict": "proceed"}
+{"q": "Is this area flooded?", "input": "sar2", "task": "vqa", "target": "water", "verdict": "scope_down"}
+{"q": "What changed between these two dates?", "input": "bitemporal", "task": "change", "target": "land_cover", "verdict": "proceed"}
+{"q": "How much did the water extent increase?", "input": "bitemporal", "task": "change", "target": "water", "verdict": "proceed"}
+{"q": "Is this area flooded?", "input": "bitemporal", "task": "change", "target": "water", "verdict": "proceed"}
+{"q": "Has the forest cover decreased?", "input": "bitemporal", "task": "change", "target": "vegetation", "verdict": "proceed"}
+{"q": "Has any new excavation appeared?", "input": "bitemporal", "task": "change", "target": "bare_soil", "verdict": "proceed"}
+{"q": "Show where new buildings appeared.", "input": "bitemporal", "task": "change", "target": "built_up", "verdict": "proceed"}
+{"q": "Where did the river expand?", "input": "bitemporal", "task": "change", "target": "water", "verdict": "proceed"}
+{"q": "Compare the vegetation in the earlier image and the later image.", "input": "bitemporal", "task": "change", "target": "vegetation", "verdict": "proceed"}
+{"q": "How much water is in the later image?", "input": "bitemporal", "task": "change", "target": "water", "verdict": "proceed"}
+{"q": "Has the lake receded since the first acquisition?", "input": "bitemporal", "task": "change", "target": "water", "verdict": "proceed"}
+{"q": "Use both images to find water and built-up regions.", "input": "crossmodal", "task": "fusion", "target": "water", "verdict": "proceed"}
+{"q": "Do the optical and SAR sensors agree about the flood extent?", "input": "crossmodal", "task": "fusion", "target": "water", "verdict": "proceed"}
+{"q": "Fuse the two sensors to map urban areas.", "input": "crossmodal", "task": "fusion", "target": "built_up", "verdict": "proceed"}
+{"q": "How confident can we be about the water extent?", "input": "crossmodal", "task": "fusion", "target": "water", "verdict": "proceed"}
+{"q": "How much water is there?", "input": "crossmodal", "task": "vqa", "target": "water", "verdict": "proceed"}
+{"q": "Describe this scene.", "input": "crossmodal", "task": "caption", "target": "land_cover", "verdict": "proceed"}
+{"q": "Where are the settlements?", "input": "crossmodal", "task": "grounding", "target": "built_up", "verdict": "proceed"}
+{"q": "What changed over time?", "input": "crossmodal", "task": "change", "target": "land_cover", "verdict": "request_input"}
+{"q": "How extensive is the green cover?", "input": "optical12", "task": "vqa", "target": "vegetation", "verdict": "proceed"}
+{"q": "Are there any ponds or tanks?", "input": "optical4", "task": "vqa", "target": "water", "verdict": "proceed"}
+{"q": "What share of the district is agricultural land?", "input": "optical12", "task": "vqa", "target": "vegetation", "verdict": "proceed"}
+{"q": "Locate the quarry.", "input": "optical12", "task": "grounding", "target": "bare_soil", "verdict": "proceed"}
+{"q": "Which part of the image has the most buildings?", "input": "optical12", "task": "vqa", "target": "built_up", "verdict": "proceed"}
+{"q": "Estimate the impervious surface area in square kilometres.", "input": "optical12", "task": "vqa", "target": "built_up", "verdict": "proceed"}
+{"q": "Did the coastline erode?", "input": "optical12", "task": "vqa", "target": "water", "verdict": "scope_down"}
+{"q": "Is the crop healthy compared to last season?", "input": "optical12", "task": "change", "target": "vegetation", "verdict": "request_input"}
+{"q": "Tell me about this image.", "input": "optical4", "task": "caption", "target": "land_cover", "verdict": "proceed"}
+{"q": "Find the water bodies and report their area.", "input": "optical4", "task": "grounding", "target": "water", "verdict": "proceed"}
