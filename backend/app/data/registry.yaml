@@ -1,28 +1,53 @@
-# Task -> tool plan registry. This is the "predefined registry" the
+# Task -> specialist registry. This is the "predefined registry" the
 # problem statement asks the agent to select from -- a data structure the
-# controller reads, not an if/else buried in code.
+# planner reads, not an if/else buried in code.
+#
+#   applicable_configs  input configurations the task is legal for
+#   tools               deterministic tools the planner may schedule
+#   adapter             LoRA adapter name the narration backend loads for
+#                       this task (served by vLLM --lora-modules); the mock
+#                       and Anthropic backends ignore it.
 
-vqa:
-  description: Answer a free-form question about a single (or one selected) image.
-  applicable_configs: [single_image, bi_temporal_pair, cross_modal_pair]
-  tools: [spectral_index, sar_backscatter, rs_narrate]
+tasks:
+  vqa:
+    description: Answer a free-form question about the scene.
+    applicable_configs: [single_image, bi_temporal_pair, cross_modal_pair]
+    tools: [spectral_index, sar_backscatter, fusion_agreement, grounding]
+    adapter: satquery-vqa
+  caption:
+    description: Describe the scene and its land-cover composition.
+    applicable_configs: [single_image, cross_modal_pair]
+    tools: [spectral_index, sar_backscatter, fusion_agreement, grounding]
+    adapter: satquery-caption
+  grounding:
+    description: Localise the region a question refers to (boxes, centroids, lat/lon).
+    applicable_configs: [single_image, cross_modal_pair, bi_temporal_pair]
+    tools: [spectral_index, sar_backscatter, fusion_agreement, delta_change, grounding]
+    adapter: satquery-grounding
+  change:
+    description: Quantify what changed between two dates of the same modality.
+    applicable_configs: [bi_temporal_pair]
+    tools: [spectral_index, sar_backscatter, delta_change, grounding]
+    adapter: satquery-change
+  fusion:
+    description: Combine co-registered optical and SAR evidence; report agreement.
+    applicable_configs: [cross_modal_pair]
+    tools: [spectral_index, sar_backscatter, fusion_agreement, grounding]
+    adapter: satquery-fusion
 
-caption:
-  description: Describe the scene / land cover in the image.
-  applicable_configs: [single_image]
-  tools: [spectral_index, sar_backscatter, rs_narrate]
-
-grounding:
-  description: Localize the specific region a question refers to (e.g. "highlight the water body").
-  applicable_configs: [single_image, cross_modal_pair]
-  tools: [spectral_index, sar_backscatter, rs_narrate]
-
-change:
-  description: Describe and quantify what changed between two dates of the same modality.
-  applicable_configs: [bi_temporal_pair]
-  tools: [spectral_index, sar_backscatter, delta_change, rs_narrate]
-
-fusion:
-  description: Combine co-registered optical and SAR evidence, noting agreement/disagreement.
-  applicable_configs: [cross_modal_pair]
-  tools: [spectral_index, sar_backscatter, fusion_agreement, rs_narrate]
+tools:
+  spectral_index:
+    impl: "MNDWI/NDWI, NDVI, NDBI, BSI band arithmetic; Otsu clamped to literature ranges; MMU filter"
+    runs_on: optical
+  sar_backscatter:
+    impl: "Lee 5x5 speckle filter; co-pol dB water threshold; double-bounce built-up"
+    runs_on: sar
+  delta_change:
+    impl: "T2 AND NOT T1 mask arithmetic on co-registered grids; minimum mapping unit"
+    runs_on: pair
+  fusion_agreement:
+    impl: "IoU / Dice between independently derived optical and SAR masks"
+    runs_on: pair
+  grounding:
+    impl: "Connected components -> boxes, areas, WGS84 centroids"
+    runs_on: masks

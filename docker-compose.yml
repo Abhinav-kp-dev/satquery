@@ -1,0 +1,20 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      SATQUERY_VLM_PROVIDER: ${SATQUERY_VLM_PROVIDER:-mock}
+      SATQUERY_VLM_BASE_URL: ${SATQUERY_VLM_BASE_URL:-http://host.docker.internal:8001}
+      SATQUERY_ANTHROPIC_API_KEY: ${SATQUERY_ANTHROPIC_API_KEY:-}
+    volumes:
+      - satquery-data:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  satquery-data:

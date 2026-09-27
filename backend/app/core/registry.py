@@ -14,11 +14,21 @@ def load_registry() -> dict:
         return yaml.safe_load(f)
 
 
-def tool_plan_for(task: Task) -> list[str]:
-    entry = load_registry().get(task.value, {})
-    return list(entry.get("tools", []))
+def task_entry(task: Task) -> dict:
+    return load_registry()["tasks"].get(task.value, {})
+
+
+def tool_entry(tool: str) -> dict:
+    return load_registry()["tools"].get(tool, {})
+
+
+def allowed_tools(task: Task) -> list[str]:
+    return list(task_entry(task).get("tools", []))
+
+
+def adapter_for(task: Task) -> str | None:
+    return task_entry(task).get("adapter")
 
 
 def is_task_applicable(task: Task, config: InputConfig) -> bool:
-    entry = load_registry().get(task.value, {})
-    return config.value in entry.get("applicable_configs", [])
+    return config.value in task_entry(task).get("applicable_configs", [])
